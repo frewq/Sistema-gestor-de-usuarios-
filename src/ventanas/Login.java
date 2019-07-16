@@ -6,14 +6,21 @@
 package ventanas;
 
 import java.awt.Image;
+import java.awt.Toolkit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import java.sql.*;
+import clases.Coneccion;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Fabian
  */
 public class Login extends javax.swing.JFrame {
+    
+    public static String user = "";
+    String pass = "";
 
     /**
      * Creates new form Login
@@ -36,6 +43,14 @@ public class Login extends javax.swing.JFrame {
         this.repaint();
     }
 
+    @Override
+    public Image getIconImage(){
+        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("images/icon.png"));
+        return retValue;
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,9 +63,12 @@ public class Login extends javax.swing.JFrame {
         txt_user = new javax.swing.JTextField();
         txt_password = new javax.swing.JPasswordField();
         jLabel_Logo = new javax.swing.JLabel();
+        jButton_Acceder = new javax.swing.JButton();
+        jLabel_Footer = new javax.swing.JLabel();
         jLabel_Wallpaper = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(getIconImage());
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txt_user.setBackground(new java.awt.Color(153, 153, 255));
@@ -67,10 +85,72 @@ public class Login extends javax.swing.JFrame {
         txt_password.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         getContentPane().add(txt_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 370, 210, -1));
         getContentPane().add(jLabel_Logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 10, 270, 270));
+
+        jButton_Acceder.setBackground(new java.awt.Color(153, 153, 255));
+        jButton_Acceder.setFont(new java.awt.Font("Arial Narrow", 0, 18)); // NOI18N
+        jButton_Acceder.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Acceder.setText("Acceder");
+        jButton_Acceder.setBorder(null);
+        jButton_Acceder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_AccederActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton_Acceder, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 420, 210, -1));
+
+        jLabel_Footer.setText("Creado por Fabian");
+        getContentPane().add(jLabel_Footer, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 510, -1, -1));
         getContentPane().add(jLabel_Wallpaper, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, 550));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton_AccederActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AccederActionPerformed
+        
+        user = txt_user.getText().trim();
+        pass = txt_password.getText().trim();
+        
+        if (!user.equals("") || !pass.equals("")){
+            
+            try{
+                Connection cn = Coneccion.conectar();
+                PreparedStatement pst = cn.prepareStatement("select tipo_nivel, estatus from usuarios where username = '" + user + "' and password = '" + pass + "'");
+                
+                ResultSet rs = pst.executeQuery();
+                if (rs.next()){
+                    
+                    String tipo_nivel = rs.getString("tipo_nivel");
+                    String estatus = rs.getString("estatus");
+                    
+                    if (tipo_nivel.equalsIgnoreCase("Administrador") && estatus.equalsIgnoreCase("Activo")){
+                        dispose(); //cierra la interface de login
+                        new Administrador().setVisible(true);
+                    }else if (tipo_nivel.equalsIgnoreCase("Capturista") && estatus.equalsIgnoreCase("Activo")){
+                        dispose(); //cierra la interface de login
+                        new Capturista().setVisible(true);
+                    }else if (tipo_nivel.equalsIgnoreCase("Tecnico") && estatus.equalsIgnoreCase("Activo")){
+                        dispose(); //cierra la interface de login
+                        new Tecnico().setVisible(true);
+                    }
+                }else {
+                    JOptionPane.showMessageDialog(null, "Datos de acceso incorrectos.");
+                    txt_user.setText("");
+                    txt_password.setText("");
+                }
+                
+                
+            }catch (SQLException er){
+                System.err.println("Error en botón Acceder. " + er);
+                JOptionPane.showMessageDialog(null, "¡Error al iniciar sesión!, contacte al administrador.");
+            }
+                
+                    
+            
+        }else {
+            JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
+        }
+        
+    }//GEN-LAST:event_jButton_AccederActionPerformed
 
     /**
      * @param args the command line arguments
@@ -108,6 +188,8 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_Acceder;
+    private javax.swing.JLabel jLabel_Footer;
     private javax.swing.JLabel jLabel_Logo;
     private javax.swing.JLabel jLabel_Wallpaper;
     private javax.swing.JPasswordField txt_password;
