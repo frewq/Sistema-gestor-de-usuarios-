@@ -100,6 +100,8 @@ public class Login extends javax.swing.JFrame {
 
         jLabel_Footer.setText("Creado por Fabian");
         getContentPane().add(jLabel_Footer, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 510, -1, -1));
+
+        jLabel_Wallpaper.setBackground(new java.awt.Color(153, 153, 255));
         getContentPane().add(jLabel_Wallpaper, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, 550));
 
         pack();
