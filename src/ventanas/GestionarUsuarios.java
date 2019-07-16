@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package ventanas;
+
 import java.sql.*;
 import clases.Coneccion;
 import java.awt.Image;
@@ -17,7 +18,6 @@ import javax.swing.JTable;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
-
 /**
  *
  * @author Fabian
@@ -27,7 +27,7 @@ public class GestionarUsuarios extends javax.swing.JFrame {
     String user;
     public static String user_update = "";
     DefaultTableModel model = new DefaultTableModel(); //permite el acceso a todos los metodos para modificar datos en la tabla
-    
+
     /**
      * Creates new form GestionarUsuarios
      */
@@ -62,7 +62,7 @@ public class GestionarUsuarios extends javax.swing.JFrame {
             model.addColumn("Permisos");
             model.addColumn("Estatus");
             
-            while(rs.next()){  //rs.next es para si encontro coincidencias
+            while (rs.next()) {  //rs.next es para si encontro coincidencias
                 Object[] fila = new Object[5]; //por que en la tabla es del tipo object
                 
                 for (int i = 0; i < 5; i++) {
@@ -77,15 +77,29 @@ public class GestionarUsuarios extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Error al mostrar información. Contacte con el Administrador");
             
         }
+        
+        jTable_usuarios.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent ev){
+                int fila_point = jTable_usuarios.rowAtPoint(ev.getPoint());
+                int columna_point = 2;
+                
+                if(fila_point > -1){
+                    user_update = (String)model.getValueAt(fila_point, columna_point);
+                    InformacionUsuario informacion_usuario = new InformacionUsuario();
+                    informacion_usuario.setVisible(true);
+                }
+            }
+        });
+        
     }
-
     
     @Override
-    public Image getIconImage(){
+    public Image getIconImage() {
         Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("images/icon.png"));
         return retValue;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
